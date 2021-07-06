@@ -1,14 +1,7 @@
 import {Component, Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
-import {of} from 'rxjs/observable/of';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/merge';
+import {Observable, of, OperatorFunction} from 'rxjs';
+import {catchError, debounceTime, distinctUntilChanged, map, tap, switchMap} from 'rxjs/operators';
 
 const WIKI_URL = 'https://en.wikipedia.org/w/api.php';
 const PARAMS = new HttpParams({
@@ -29,8 +22,9 @@ export class WikipediaService {
     }
 
     return this.http
-      .get(WIKI_URL, {params: PARAMS.set('search', term)})
-      .map(response => response[1]);
+      .get<[any, string[]]>(WIKI_URL, {params: PARAMS.set('search', term)}).pipe(
+        map(response => response[1])
+      );
   }
 }
 
@@ -38,28 +32,28 @@ export class WikipediaService {
   selector: 'ngbd-typeahead-http',
   templateUrl: './typeahead-http.html',
   providers: [WikipediaService],
-  styles: [`.form-control { width: 300px; display: inline; }`]
+  styles: [`.form-control { width: 300px; }`]
 })
 export class NgbdTypeaheadHttp {
   model: any;
   searching = false;
   searchFailed = false;
-  hideSearchingWhenUnsubscribed = new Observable(() => () => this.searching = false);
 
   constructor(private _service: WikipediaService) {}
 
-  search = (text$: Observable<string>) =>
-    text$
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .do(() => this.searching = true)
-      .switchMap(term =>
-        this._service.search(term)
-          .do(() => this.searchFailed = false)
-          .catch(() => {
+  search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.searching = true),
+      switchMap(term =>
+        this._service.search(term).pipe(
+          tap(() => this.searchFailed = false),
+          catchError(() => {
             this.searchFailed = true;
             return of([]);
           }))
-      .do(() => this.searching = false)
-      .merge(this.hideSearchingWhenUnsubscribed);
+      ),
+      tap(() => this.searching = false)
+    )
 }

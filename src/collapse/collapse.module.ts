@@ -1,9 +1,9 @@
-import {NgModule, ModuleWithProviders} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {NgbCollapse} from './collapse';
 
 export {NgbCollapse} from './collapse';
+export {NgbCollapseConfig} from './collapse-config';
 
 @NgModule({declarations: [NgbCollapse], exports: [NgbCollapse]})
 export class NgbCollapseModule {
-  static forRoot(): ModuleWithProviders { return {ngModule: NgbCollapseModule, providers: []}; }
 }

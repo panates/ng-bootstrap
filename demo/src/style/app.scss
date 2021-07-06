@@ -1,135 +1,214 @@
 // styles in src/style directory are applied to the whole page
 
-.navbar {
-  background: rgba(255,255,255,0.95);
+header.navbar {
+  background: linear-gradient(135deg, #0143a3, #0273d4);
 }
 
-.bd-booticon {
-  margin: 1.25rem;
-  width: 256px;
-  height: 256px;
+.masthead-followup {
+  img {
+    width: 64px;
+    height: 64px;
+  }
 }
 
-.bd-masthead, .jumbotron {
-  background-color: #0143A3;
-  background: linear-gradient(135deg, #0143A3, #0273D4);
-}
+.footer {
+  padding: 3rem 0;
+  font-size: 0.85rem;
+  text-align: left;
 
-.bd-masthead {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  margin-bottom: 4rem;
-  text-align: center;
-  color: #efefef;
-
-  .lead {
-    margin-right: auto;
-    margin-bottom: 2rem;
-    margin-left: auto;
-    width: 80%;
-    font-size: 2rem;
-    color: #fff;
+  p {
+    margin-bottom: 0;
   }
 
-  .btn {
+  a {
+    font-weight: 500;
+    color: #000;
+    text-decoration: underline;
+  }
+}
+
+.social-buttons {
+  font-size: x-small;
+  a {
     color: #fff;
-    border-color: #fff;
-    &:hover {
-      background-color: #f7f7f7;
-      color: #0273D4;
+    text-decoration: none;
+  }
+
+  svg {
+    fill: currentColor;
+  }
+}
+
+.sidebar-collapsed {
+  margin-left: -15px;
+  margin-right: -15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sidebar {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 4rem);
+  margin-right: -1rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+header.title {
+  margin-left: -15px;
+  margin-right: -15px;
+  position: relative;
+
+  .content-tabset {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .nav-link {
+      border-style: solid;
+      border-width: 3px 1px 1px;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .nav-link:not(.active):hover {
+      border-color: transparent;
+    }
+
+    .active {
+      border-top-color: #28a745;
+    }
+
+    .navigation-dropdown {
+      cursor: pointer;
+
+      .nav-link {
+        padding-right: 0.3rem;
+        line-height: 1em;
+        border-color: transparent;
+        background: none;
+        color: #007bff;
+        &:hover {
+          color: #0056b3;
+        }
+      }
+
+      .dropdown-toggle:after {
+        display: none;
+      }
+
+      .dropdown-menu {
+        border-color: #d9d9d9;
+      }
+
+      svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      &.show {
+        .nav-link {
+          color: #0056b3;
+        }
+      }
     }
   }
 }
 
-.jumbotron {
-  color: #fff;
-  border-radius: 0;
+.toc {
+  margin-left: 15px;
+//   margin-right: -15px;
+  font-size: 1.1rem;
+
+  .toc-item {
+    .toc-link {
+//       display: block;
+//       padding: 0.25rem 1.5rem;
+      color: rgba(0, 0, 0, 0.65);
+
+      &.deprecated {
+        text-decoration: line-through !important;
+
+        &:first-child {
+          margin-top: 0.5rem;
+        }
+      }
+    }
+
+    .nav > li > a {
+      font-size: 0.85em;
+      display: inline-block;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        margin-left: -0.5rem;
+        padding: 0 0.5rem;
+        background-color: #f8f9fa;
+        border-radius: 3px;
+      }
+    }
+
+    .nav > li.active > a {
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    &.active > .toc-link {
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
 }
 
-.github-buttons {
+.contextual-nav .nav {
+  position: sticky;
+  top: 0;
 
-  header & {
-    margin-bottom: 0;
-    margin-top: 4px;
-    padding-left: 0;
+  a {
+    color: inherit;
+    font-size: 90%;
+    padding: 0.25rem 1rem;
   }
 
-  ngbd-default & {
-    text-align: center;
-    margin-top: 2rem;
+  a:hover {
+    color: #0275d8;
   }
 }
 
-@media (min-width: 768px) {
-  .bd-sidebar {
-    padding-left: 1rem;
+.deprecated {
+  h3 {
+    text-decoration: line-through;
+  }
 
+  h5 {
     display: inline-block;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 1rem;
+  }
+
+  td.label-cell code,
+  p.signature,
+  code.selector,
+  code.export-as {
+    text-decoration: line-through;
+  }
+
+  .description,
+  .meta,
+  .lead {
+    opacity: 0.5;
   }
 }
 
-.bd-toc-link {
-  display: block;
-  padding: .25rem .75rem;
-  color: #55595c;
-}
-
-.bd-toc-link:focus,
-.bd-toc-link:hover {
-  color: #0275d8;
-  text-decoration: none;
-}
-
-.active > .bd-toc-link {
-  font-weight: 500;
-  color: #373a3c;
-}
-
-.bd-toc-item.active {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.bd-toc-item:first-child {
-  margin-top: 0;
-}
-
-.bd-toc-item:last-child {
-  margin-bottom: 2rem;
-}
-
-.bd-sidebar .nav > li > a {
-  display: block;
-  padding: .25rem .75rem;
-  font-size: 90%;
-  color: #99979c;
-}
-
-.bd-sidebar .nav > li > a:focus,
-.bd-sidebar .nav > li > a:hover {
-  color: #0275d8;
-  text-decoration: none;
-  background-color: transparent;
-}
-
-.bd-sidebar .nav > .active:focus > a,
-.bd-sidebar .nav > .active:hover > a,
-.bd-sidebar .nav > .active > a {
-  font-weight: 500;
-  color: #373a3c;
-  background-color: transparent;
-}
-
-div.api-doc-component {
+div.api-doc-component,
+.overview {
   margin-bottom: 3rem;
 
-  > h2, > h3 {
+  h2,
+  h3 {
     .github-link {
-      transition: opacity .5s;
-      opacity: .3;
+      transition: opacity 0.5s;
+      opacity: 0.3;
+      margin-left: 0.5rem;
     }
 
     &:hover {
@@ -142,7 +221,8 @@ div.api-doc-component {
     }
   }
 
-  section {
+  section,
+  ngbd-overview-section {
     margin-top: 3rem;
     h4 {
       margin-top: 2rem;
@@ -150,10 +230,22 @@ div.api-doc-component {
     }
 
     .meta {
-      font-size: .8rem;
+      font-size: 0.8rem;
       margin-bottom: 1rem;
       > div {
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+}
+
+ngbd-page-header {
+  margin-top: 3rem;
+
+  h2 {
+    &:hover {
+      & > .title-fragment {
+        opacity: 1;
       }
     }
   }
@@ -173,17 +265,39 @@ a.title-fragment {
   }
 }
 
+a.title-fragment:focus {
+  opacity: 1;
+}
+
 div.component-demo {
   margin-bottom: 3rem;
   h2 {
+    display: flex;
     margin-bottom: 1rem;
 
-    .plunker {
-      opacity: 0.3;
-      transition: opacity .5s;
+    span {
+      flex-grow: 1;
     }
+
+    .stackblitz,
+    .toggle-code {
+      display: flex;
+      align-items: center;
+      align-self: center;
+    }
+
+    .toggle-code svg {
+      vertical-align: middle;
+      fill: #28a745;
+    }
+
+    .stackblitz .stackblitz-icon {
+      height: 1.2rem;
+      margin-left: -0.5rem;
+    }
+
     &:hover {
-      .plunker {
+      & > .title-fragment {
         opacity: 1;
       }
     }
@@ -191,8 +305,7 @@ div.component-demo {
 
   .tabset-code {
     .nav {
-      margin: 0;
-      padding: .5rem 1.25rem 0;
+      padding: 0.5rem 1.25rem 0;
       font-size: 80%;
 
       .nav-link.active {
@@ -208,12 +321,31 @@ div.component-demo {
       }
     }
 
-    .tab-content {
-      overflow: hidden;
+    .nav.nav-pills {
+      border-right: 1px solid #dee2e6;
+      padding-left: 0.75rem;
+      padding-right: 0;
+
+      .nav-link.active {
+        color: #666;
+        background-color: #f5f5f5;
+        border: 1px solid #dee2e6;
+        border-right-color: #f5f5f5;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        margin-right: -1px;
+      }
+
+      & + .tab-content {
+        flex: 1;
+        overflow: hidden;
+      }
     }
 
     pre {
       margin: 0;
+      max-height: 500px;
+      overflow: auto;
     }
   }
 }
@@ -222,24 +354,9 @@ div.component-demo {
   font-size: 80%;
 }
 
-.bd-footer {
-  padding: 3rem 0;
-  margin-top: 3rem;
-  font-size: 85%;
-  background-color: #f7f7f7;
-  text-align: left;
-
-  p {
-    margin-bottom: 0;
-  }
-
-  a {
-    font-weight: 500;
-    color: #55595c;
-  }
-}
-
-ngbd-api-docs, ngbd-api-docs-class, ngbd-api-docs-config {
+ngbd-api-docs,
+ngbd-api-docs-class,
+ngbd-api-docs-config {
   display: block;
 
   &:not(:first-child) {
@@ -249,12 +366,21 @@ ngbd-api-docs, ngbd-api-docs-class, ngbd-api-docs-config {
   }
 }
 
-
+.overview {
+  .alert {
+    border-left-width: 5px;
+    border-radius: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
 
 // override prism theme background color to inline it with bootstrap colors
 code[class*="language-"],
-pre[class*="language-"] {
+pre[class*="language-"],
+ngb-alert {
   background-color: #f5f5f5; // same as bootstrap card header
+  border-radius: 3px;
 }
 
 span.token.tag {
@@ -262,86 +388,39 @@ span.token.tag {
   padding: 0;
 }
 
-ngbd-component-wrapper, ngbd-page-wrapper {
-  .jumbotron {
-    border-radius: 0;
-  }
-}
-
-.root-nav {
-  $offset: 73px;
-  > .nav-tabs {
-    transform: translateY(-$offset);
-
-    .nav-link:not(.active) {
-      color: #f9f9f9;
-    }
-
-    .nav-link:not(.active):hover {
-      background-color: rgba(255,255,255, 0.15);
-      border-color: rgba(255,255,255, 0.15);
-    }
-  }
-
-  > .tab-content {
-    transform: translateY(-$offset / 2);
-  }
-}
-
-@mixin center-nav-tab-on-small-screens() {
-  .jumbotron > .container {
-    margin-bottom: 2rem;
-    h1 {
-      text-align: center;
-    }
-  }
-
-  .root-nav {
-    ul {
-      justify-content: center !important;
-    }
-  }
-}
-
-@media (max-width: 768px) and (orientation:portrait) {
-  @include center-nav-tab-on-small-screens();
-}
-
-@media (max-width: 568px) and (max-height: 320px)  {
-  @include center-nav-tab-on-small-screens();
-}
-
 // Right-To-Left layout for the Islamic Calendars
 ngb-datepicker.rtl {
-	direction: rtl;
+  direction: rtl;
 }
 
 ngb-datepicker.rtl ngb-datepicker-navigation-select select.custom-select {
   background-position: left 0.25rem center;
 }
-// Useful to modify this to flex-start for multiple calendar only
-ngb-datepicker.rtl .ngb-dp-arrow.right {
-  justify-content: center;
-}
-// Useful to modify this to flex-end for multiple calendar only
-ngb-datepicker.rtl .ngb-dp-arrow {
-  justify-content: center;
-}
 
-ngb-datepicker.rtl .ngb-dp-arrow-btn {
-  padding: 0;
-}
-
-ngb-datepicker.rtl .ngb-dp-arrow.right .ngb-dp-navigation-chevron:before {
+ngb-datepicker.rtl .ngb-dp-arrow.right .ngb-dp-navigation-chevron {
   transform: rotate(-135deg);
-  -webkit-transform: rotate(-135deg);
-  -ms-transform: rotate(-135deg);
-  margin: 0 0 0 0.5rem;
+  margin: 0 0 0 0.25rem;
 }
 
-ngb-datepicker.rtl .ngb-dp-navigation-chevron::before {
+ngb-datepicker.rtl .ngb-dp-navigation-chevron {
   transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  margin: 0 0.5rem 0 0;
+  margin: 0 0.25rem 0 0;
+}
+
+ngb-datepicker.hebrew {
+  .ngb-dp-day {
+    width: 2.75rem;
+    height: 2.75rem;
+    line-height: 1rem;
+  }
+
+  .ngb-dp-weekday {
+    width: 2.75rem;
+  }
+}
+
+ngb-carousel {
+  .carousel-item img {
+    width: 100%;
+  }
 }

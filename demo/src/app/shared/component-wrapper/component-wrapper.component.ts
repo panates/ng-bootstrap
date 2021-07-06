@@ -1,38 +1,104 @@
-import {Component, Input} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Component, NgZone, OnDestroy, Type} from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import {Observable, Subscription} from 'rxjs';
+import { filter, pluck, map } from 'rxjs/operators';
 
-export const DEFAULT_TAB = 'examples';
-const VALID_TABS = [DEFAULT_TAB, 'api'];
+import { NgbdApiPage } from '../../components/shared/api-page/api.component';
+import { NgbdExamplesPage } from '../../components/shared/examples-page/examples.component';
+
+import { environment } from '../../../environments/environment';
+
+export type TableOfContents = {fragment: string, title: string}[];
 
 @Component({
-  selector: 'ngbd-component-wrapper',
-  templateUrl: './component-wrapper.component.html'
+  selector: 'component-wrapper',
+  templateUrl: 'component-wrapper.component.html'
 })
-export class ComponentWrapper {
 
-  @Input()
-  public component: string;
+export class ComponentWrapper implements OnDestroy {
+  private _routerSubscription: Subscription;
 
-  public activeTab: string;
+  activeTab = 'examples';
 
-  public fileTypes = [
-    ['T', 'HTML template file', 'btn-secondary'],
-    ['C', 'Component typescript file', 'btn-info'],
-  ];
+  component: string;
 
-  constructor(private route: ActivatedRoute, private router: Router) {
-    this.route.params.subscribe(params => {
-      const tab = params['tab'];
-      if (VALID_TABS.indexOf(tab) !== -1) {
-        this.activeTab = tab;
-      } else {
-        this.router.navigate(['..', DEFAULT_TAB], {relativeTo: this.route});
-      }
-      document.body.scrollIntoView();
+  headerComponentType$: Observable<Type<any>>;
+  bootstrapUrl$: Observable<String>;
+
+  isLargeScreenOrLess: boolean;
+  isSmallScreenOrLess: boolean;
+
+  sidebarCollapsed = true;
+
+  tableOfContents: TableOfContents = [];
+
+  constructor(public route: ActivatedRoute, private _router: Router, ngZone: NgZone) {
+    // This component is used in route definition 'components'
+    // So next child route will always be ':componentType' & next one will always be ':pageType' (or tab)
+
+    this._routerSubscription = this._router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      const parentRoute = this.route.snapshot.parent;
+      const tabRoute = this.route.snapshot.firstChild;
+
+      this.component = parentRoute!.url[1].path;
+      this.activeTab = tabRoute!.url[0].path;
     });
+
+    this.headerComponentType$ = this.route.data.pipe(pluck('header'));
+    this.bootstrapUrl$ = this.route.data.pipe(pluck('bootstrap'), map(url => (url && url.replace('%version%', environment.bootstrap))));
+
+    // information extracted from https://getbootstrap.com/docs/4.1/layout/overview/
+    // TODO: we should implements our own mediamatcher, according to bootstrap layout.
+    const smallScreenQL = matchMedia('(max-width: 767.98px)');
+    // tslint:disable-next-line:deprecation
+    smallScreenQL.addListener((event) => ngZone.run(() => this.isSmallScreenOrLess = event.matches));
+    this.isSmallScreenOrLess = smallScreenQL.matches;
+
+    const largeScreenQL = matchMedia('(max-width: 1199.98px)');
+    this.isLargeScreenOrLess = largeScreenQL.matches;
+    // tslint:disable-next-line:deprecation
+    largeScreenQL.addListener((event) => ngZone.run(() => this.isLargeScreenOrLess = event.matches));
   }
 
-  tabChange(event) {
-    this.router.navigate(['..', event.nextId], {relativeTo: this.route});
+  ngOnDestroy() {
+    this._routerSubscription.unsubscribe();
+  }
+
+  updateNavigation(component: NgbdExamplesPage | NgbdApiPage | any) {
+    const getLinks = (typeCollection: string[]) => {
+      return typeCollection.map(item => ({
+        fragment: item,
+        title: item
+      }));
+    };
+    this.tableOfContents = [];
+    if (component instanceof NgbdExamplesPage) {
+      this.tableOfContents = component.demos.map(demo => {
+        return {
+          fragment: demo.id,
+          title: demo.title
+        };
+      });
+    } else if (component instanceof NgbdApiPage) {
+      let toc = getLinks(component.components);
+
+      if (component.classes.length > 0) {
+        const klasses = getLinks(component.classes);
+        toc = toc.concat(toc.length > 0  ? [<any>{}, ...klasses] : klasses);
+      }
+
+      if (component.configs.length > 0) {
+        const configs = getLinks(component.configs);
+        toc = toc.concat(toc.length > 0  ? [<any>{}, ...configs] : configs);
+      }
+
+      this.tableOfContents = toc;
+
+    } else /* Overview */ {
+      // TODO: maybe we should also have an abstract class to test instanceof
+      this.tableOfContents = Object.values(component.sections).map(section => section) as TableOfContents;
+    }
   }
 }

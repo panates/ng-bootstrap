@@ -1,88 +1,42 @@
-import {Component, Input, Output, EventEmitter, ChangeDetectionStrategy} from '@angular/core';
+import {Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
 import {NavigationEvent, MonthViewModel} from './datepicker-view-model';
 import {NgbDate} from './ngb-date';
 import {NgbDatepickerI18n} from './datepicker-i18n';
-import {NgbCalendar} from './ngb-calendar';
 
 @Component({
   selector: 'ngb-datepicker-navigation',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [`
-    :host {
-      height: 2rem;
-      line-height: 1.85rem;
-      display: flex;
-    }
-    .ngb-dp-navigation-chevron::before {
-      border-style: solid;
-      border-width: 0.2em 0.2em 0 0;
-      content: '';
-      display: inline-block;
-      width: 0.75em;
-      height: 0.75em;
-      transform: rotate(-135deg);
-      -webkit-transform: rotate(-135deg);
-      -ms-transform: rotate(-135deg);
-    }
-    .right .ngb-dp-navigation-chevron:before {
-      -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-      transform: rotate(45deg);
-    }
-    .ngb-dp-arrow {
-      display: flex;
-      flex-basis: auto;
-      flex-grow: 1;
-      padding-right: 0px;
-      padding-left: 0px;
-      margin: 0px;
-      width: 2rem;
-      height: 2rem;
-    }
-    .ngb-dp-arrow.right {
-      justify-content: flex-end;
-    }
-    .ngb-dp-arrow-btn {
-      padding: 0rem 1rem;
-    }
-    .ngb-dp-month-name {
-      font-size: larger;
-      height: 2rem;
-      line-height: 2rem;
-      text-align: center;
-    }
-    .ngb-dp-navigation-select {
-      flex-grow: 1;
-      flex-basis: 9rem;
-    }
-  `],
+  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./datepicker-navigation.scss'],
   template: `
-  <div class="ngb-dp-arrow">
-    <button type="button" class="btn btn-link ngb-dp-arrow-btn"
-            (click)="!!doNavigate(navigation.PREV)" [disabled]="prevDisabled()" tabindex="-1">
-      <span class="ngb-dp-navigation-chevron"></span>
-    </button>
-  </div>
-    <ngb-datepicker-navigation-select *ngIf="showSelect" class="d-block ngb-dp-navigation-select"
+    <div class="ngb-dp-arrow">
+      <button type="button" class="btn btn-link ngb-dp-arrow-btn" (click)="onClickPrev($event)" [disabled]="prevDisabled"
+              i18n-aria-label="@@ngb.datepicker.previous-month" aria-label="Previous month"
+              i18n-title="@@ngb.datepicker.previous-month" title="Previous month">
+        <span class="ngb-dp-navigation-chevron"></span>
+      </button>
+    </div>
+    <ngb-datepicker-navigation-select *ngIf="showSelect" class="ngb-dp-navigation-select"
       [date]="date"
-      [minDate]="minDate"
-      [maxDate]="maxDate"
       [disabled] = "disabled"
-      (select)="selectDate($event)">
+      [months]="selectBoxes.months"
+      [years]="selectBoxes.years"
+      (select)="select.emit($event)">
     </ngb-datepicker-navigation-select>
 
     <ng-template *ngIf="!showSelect" ngFor let-month [ngForOf]="months" let-i="index">
       <div class="ngb-dp-arrow" *ngIf="i > 0"></div>
-      <div class="ngb-dp-month-name d-block">
-        {{ i18n.getMonthFullName(month.number) }} {{ month.year }}
+      <div class="ngb-dp-month-name">
+        {{ i18n.getMonthLabel(month.firstDate) }}
       </div>
       <div class="ngb-dp-arrow" *ngIf="i !== months.length - 1"></div>
     </ng-template>
     <div class="ngb-dp-arrow right">
-    <button type="button" class="btn btn-link ngb-dp-arrow-btn"
-            (click)="!!doNavigate(navigation.NEXT)" [disabled]="nextDisabled()" tabindex="-1">
-      <span class="ngb-dp-navigation-chevron"></span>
-    </button>
+      <button type="button" class="btn btn-link ngb-dp-arrow-btn" (click)="onClickNext($event)" [disabled]="nextDisabled"
+              i18n-aria-label="@@ngb.datepicker.next-month" aria-label="Next month"
+              i18n-title="@@ngb.datepicker.next-month" title="Next month">
+        <span class="ngb-dp-navigation-chevron"></span>
+      </button>
     </div>
     `
 })
@@ -91,27 +45,24 @@ export class NgbDatepickerNavigation {
 
   @Input() date: NgbDate;
   @Input() disabled: boolean;
-  @Input() maxDate: NgbDate;
-  @Input() minDate: NgbDate;
   @Input() months: MonthViewModel[] = [];
   @Input() showSelect: boolean;
-  @Input() showWeekNumbers: boolean;
+  @Input() prevDisabled: boolean;
+  @Input() nextDisabled: boolean;
+  @Input() selectBoxes: {years: number[], months: number[]};
 
   @Output() navigate = new EventEmitter<NavigationEvent>();
   @Output() select = new EventEmitter<NgbDate>();
 
-  constructor(public i18n: NgbDatepickerI18n, private _calendar: NgbCalendar) {}
+  constructor(public i18n: NgbDatepickerI18n) {}
 
-  doNavigate(event: NavigationEvent) { this.navigate.emit(event); }
-
-  nextDisabled() {
-    return this.disabled || (this.maxDate && this._calendar.getNext(this.date, 'm').after(this.maxDate));
+  onClickPrev(event: MouseEvent) {
+    (event.currentTarget as HTMLElement).focus();
+    this.navigate.emit(this.navigation.PREV);
   }
 
-  prevDisabled() {
-    const prevDate = this._calendar.getPrev(this.date, 'm');
-    return this.disabled || (this.minDate && prevDate.year <= this.minDate.year && prevDate.month < this.minDate.month);
+  onClickNext(event: MouseEvent) {
+    (event.currentTarget as HTMLElement).focus();
+    this.navigate.emit(this.navigation.NEXT);
   }
-
-  selectDate(date: NgbDate) { this.select.emit(date); }
 }

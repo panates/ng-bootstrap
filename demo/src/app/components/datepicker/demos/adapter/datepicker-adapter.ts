@@ -1,18 +1,53 @@
 import {Component, Injectable} from '@angular/core';
-import {NgbDateAdapter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCalendar, NgbDateAdapter, NgbDateParserFormatter, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 /**
- * Example of a Native Date adapter
+ * This Service handles how the date is represented in scripts i.e. ngModel.
  */
 @Injectable()
-export class NgbDateNativeAdapter extends NgbDateAdapter<Date> {
+export class CustomAdapter extends NgbDateAdapter<string> {
 
-  fromModel(date: Date): NgbDateStruct {
-    return (date && date.getFullYear) ? {year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate()} : null;
+  readonly DELIMITER = '-';
+
+  fromModel(value: string | null): NgbDateStruct | null {
+    if (value) {
+      let date = value.split(this.DELIMITER);
+      return {
+        day : parseInt(date[0], 10),
+        month : parseInt(date[1], 10),
+        year : parseInt(date[2], 10)
+      };
+    }
+    return null;
   }
 
-  toModel(date: NgbDateStruct): Date {
-    return date ? new Date(Date.UTC(date.year, date.month - 1, date.day)) : null;
+  toModel(date: NgbDateStruct | null): string | null {
+    return date ? date.day + this.DELIMITER + date.month + this.DELIMITER + date.year : null;
+  }
+}
+
+/**
+ * This Service handles how the date is rendered and parsed from keyboard i.e. in the bound input field.
+ */
+@Injectable()
+export class CustomDateParserFormatter extends NgbDateParserFormatter {
+
+  readonly DELIMITER = '/';
+
+  parse(value: string): NgbDateStruct | null {
+    if (value) {
+      let date = value.split(this.DELIMITER);
+      return {
+        day : parseInt(date[0], 10),
+        month : parseInt(date[1], 10),
+        year : parseInt(date[2], 10)
+      };
+    }
+    return null;
+  }
+
+  format(date: NgbDateStruct | null): string {
+    return date ? date.day + this.DELIMITER + date.month + this.DELIMITER + date.year : '';
   }
 }
 
@@ -22,14 +57,19 @@ export class NgbDateNativeAdapter extends NgbDateAdapter<Date> {
 
   // NOTE: For this example we are only providing current component, but probably
   // NOTE: you will want to provide your main App Module
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
+  providers: [
+    {provide: NgbDateAdapter, useClass: CustomAdapter},
+    {provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter}
+  ]
 })
 export class NgbdDatepickerAdapter {
 
-  model1: Date;
-  model2: Date;
+  model1: string;
+  model2: string;
+
+  constructor(private ngbCalendar: NgbCalendar, private dateAdapter: NgbDateAdapter<string>) {}
 
   get today() {
-    return new Date();
+    return this.dateAdapter.toModel(this.ngbCalendar.getToday())!;
   }
 }

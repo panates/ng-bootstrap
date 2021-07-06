@@ -1,13 +1,34 @@
-import {NgModule, ModuleWithProviders} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
-import {NgbPagination} from './pagination';
-import {NgbPaginationConfig} from './pagination-config';
+import {
+  NgbPagination,
+  NgbPaginationEllipsis,
+  NgbPaginationFirst,
+  NgbPaginationLast,
+  NgbPaginationNext,
+  NgbPaginationNumber,
+  NgbPaginationPrevious,
+  NgbPaginationPages
+} from './pagination';
 
-export {NgbPagination} from './pagination';
+export {
+  NgbPagination,
+  NgbPaginationEllipsis,
+  NgbPaginationFirst,
+  NgbPaginationLast,
+  NgbPaginationNext,
+  NgbPaginationNumber,
+  NgbPaginationPrevious,
+  NgbPaginationPages
+} from './pagination';
 export {NgbPaginationConfig} from './pagination-config';
 
-@NgModule({declarations: [NgbPagination], exports: [NgbPagination], imports: [CommonModule]})
+const DIRECTIVES = [
+  NgbPagination, NgbPaginationEllipsis, NgbPaginationFirst, NgbPaginationLast, NgbPaginationNext, NgbPaginationNumber,
+  NgbPaginationPrevious, NgbPaginationPages
+];
+
+@NgModule({declarations: DIRECTIVES, exports: DIRECTIVES, imports: [CommonModule]})
 export class NgbPaginationModule {
-  static forRoot(): ModuleWithProviders { return {ngModule: NgbPaginationModule, providers: [NgbPaginationConfig]}; }
 }

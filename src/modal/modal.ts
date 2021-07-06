@@ -1,66 +1,51 @@
 import {Injectable, Injector, ComponentFactoryResolver} from '@angular/core';
 
-import {NgbModalStack} from './modal-stack';
+import {NgbModalOptions, NgbModalConfig} from './modal-config';
 import {NgbModalRef} from './modal-ref';
+import {NgbModalStack} from './modal-stack';
 
 /**
- * Represent options available when opening new modal windows.
+ * A service for opening modal windows.
+ *
+ * Creating a modal is straightforward: create a component or a template and pass it as an argument to
+ * the `.open()` method.
  */
-export interface NgbModalOptions {
-  /**
-   * Whether a backdrop element should be created for a given modal (true by default).
-   * Alternatively, specify 'static' for a backdrop which doesn't close the modal on click.
-   */
-  backdrop?: boolean | 'static';
-
-  /**
-   * Function called when a modal will be dismissed.
-   * If this function returns false, the modal is not dismissed.
-   */
-  beforeDismiss?: () => boolean;
-
-  /**
-   * An element to which to attach newly opened modal windows.
-   */
-  container?: string;
-
-  /**
-   * Injector to use for modal content.
-   */
-  injector?: Injector;
-
-  /**
-   * Whether to close the modal when escape key is pressed (true by default).
-   */
-  keyboard?: boolean;
-
-  /**
-   * Size of a new modal window.
-   */
-  size?: 'sm' | 'lg';
-
-  /**
-   * Custom class to append to the modal window
-   */
-  windowClass?: string;
-}
-
-/**
- * A service to open modal windows. Creating a modal is straightforward: create a template and pass it as an argument to
- * the "open" method!
- */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class NgbModal {
   constructor(
-      private _moduleCFR: ComponentFactoryResolver, private _injector: Injector, private _modalStack: NgbModalStack) {}
+      private _moduleCFR: ComponentFactoryResolver, private _injector: Injector, private _modalStack: NgbModalStack,
+      private _config: NgbModalConfig) {}
 
   /**
-   * Opens a new modal window with the specified content and using supplied options. Content can be provided
-   * as a TemplateRef or a component type. If you pass a component type as content than instances of those
-   * components can be injected with an instance of the NgbActiveModal class. You can use methods on the
-   * NgbActiveModal class to close / dismiss modals from "inside" of a component.
+   * Opens a new modal window with the specified content and supplied options.
+   *
+   * Content can be provided as a `TemplateRef` or a component type. If you pass a component type as content,
+   * then instances of those components can be injected with an instance of the `NgbActiveModal` class. You can then
+   * use `NgbActiveModal` methods to close / dismiss modals from "inside" of your component.
+   *
+   * Also see the [`NgbModalOptions`](#/components/modal/api#NgbModalOptions) for the list of supported options.
    */
   open(content: any, options: NgbModalOptions = {}): NgbModalRef {
-    return this._modalStack.open(this._moduleCFR, this._injector, content, options);
+    const combinedOptions = {...this._config, animation: this._config.animation, ...options};
+    return this._modalStack.open(this._moduleCFR, this._injector, content, combinedOptions);
   }
+
+  /**
+   * Returns an observable that holds the active modal instances.
+   */
+  get activeInstances() { return this._modalStack.activeInstances; }
+
+  /**
+   * Dismisses all currently displayed modal windows with the supplied reason.
+   *
+   * @since 3.1.0
+   */
+  dismissAll(reason?: any) { this._modalStack.dismissAll(reason); }
+
+  /**
+   * Indicates if there are currently any open modal windows in the application.
+   *
+   * @since 3.3.0
+   */
+  hasOpenModals(): boolean { return this._modalStack.hasOpenModals(); }
 }

@@ -1,11 +1,11 @@
-import {NgModule, ModuleWithProviders} from '@angular/core';
+import {NgModule} from '@angular/core';
 
+import {NgbModal} from './modal';
 import {NgbModalBackdrop} from './modal-backdrop';
 import {NgbModalWindow} from './modal-window';
-import {NgbModalStack} from './modal-stack';
-import {NgbModal} from './modal';
 
-export {NgbModal, NgbModalOptions} from './modal';
+export {NgbModal} from './modal';
+export {NgbModalConfig, NgbModalOptions} from './modal-config';
 export {NgbModalRef, NgbActiveModal} from './modal-ref';
 export {ModalDismissReasons} from './modal-dismiss-reasons';
 
@@ -15,5 +15,4 @@ export {ModalDismissReasons} from './modal-dismiss-reasons';
   providers: [NgbModal]
 })
 export class NgbModalModule {
-  static forRoot(): ModuleWithProviders { return {ngModule: NgbModalModule, providers: [NgbModal, NgbModalStack]}; }
 }

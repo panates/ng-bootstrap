@@ -1,20 +1,29 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "target": "ES5",
-    "lib": ["es2015", "dom"],
-    "module": "commonjs",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noEmitOnError": true,
-    "outDir": "temp",
+    "rootDir": "./",
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
     "sourceMap": true,
-    "baseUrl": "./node_modules",
-    "paths": {
-      "@ng-bootstrap/ng-bootstrap": ["../src/index"]
-    }
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "strictNullChecks": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "compileOnSave": false
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
+  }
 }

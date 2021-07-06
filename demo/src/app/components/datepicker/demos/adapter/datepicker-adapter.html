@@ -1,6 +1,10 @@
-<p>These datepickers use custom Date adapter that lets you use your own model implementation.
-In this example we are converting from and to a JS native Date object</p>
-
+<p>These datepickers use custom date adapter and formatter.
+  The custom <code>NgbDateAdapter</code> lets you use your own model i.e. the structure of ngModel.
+  The custom <code>NgbDateParserFormatter</code> lets you use your own formatter or parser i.e. the date format in input field.
+<br/>
+<br/>
+  Notice that there are <strong>two</strong> different services: the <code>NgbDateAdapter</code> and the <code>NgbDateParserFormatter</code>.</p>
+<br/>
 <div class="row">
   <div class="col-6">
     <ngb-datepicker #d1 [(ngModel)]="model1" #c1="ngModel"></ngb-datepicker>
@@ -17,11 +21,11 @@ In this example we are converting from and to a JS native Date object</p>
     <form class="form-inline">
       <div class="form-group">
         <div class="input-group">
-          <input class="form-control" placeholder="yyyy-mm-dd"
+          <input class="form-control" placeholder="dd/mm/yyyy"
                  name="d2" #c2="ngModel" [(ngModel)]="model2" ngbDatepicker #d2="ngbDatepicker">
-          <button class="input-group-addon" (click)="d2.toggle()" type="button">
-            <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
-          </button>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="d2.toggle()" type="button"></button>
+          </div>
         </div>
       </div>
     </form>
